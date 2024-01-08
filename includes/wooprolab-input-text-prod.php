@@ -1,18 +1,19 @@
 <?php
 
 /* 1 - ADMIN SINGLE PROD : create a new product field  */
+
 function wooprolab_woocommerce_product_custom_fields() {
   $args = array(
 	        'id' => 'product_personalization_note',
 	        'value' => get_post_meta( get_the_ID(), 'product_personalization_note', true ),
-	        'label' => 'Customization',
+	        'label' => 'Extra Field',
 	        'desc_tip' => true,
-	        'description' => 'Customization',
+	        'description' => 'Field label shown to client for adding a custom text to print on item',
 	     );
 
 
 			echo '<div class="options_group">';
-				woocommerce_wp_text_input($args);
+				woocommerce_wp_text_input($args); // add extra field to product into general product data in product admin page.  
 			echo '</div>';
 
 	}
@@ -40,6 +41,7 @@ add_action( 'woocommerce_process_product_meta', 'wooprolab_woocommerce_product_c
 
 /* 3 - FRONT END SINGLE PROD: display the new field on single product pages */
 function wooprolab_woocommerce_custom_fields_display() {
+
   global $post;
   $product = wc_get_product($post->ID);
     $custom_fields_woocommerce_title = $product->get_meta('product_personalization_note');
@@ -57,21 +59,22 @@ add_action('woocommerce_before_add_to_cart_button', 'wooprolab_woocommerce_custo
 // -----------------------------------------
 // 4. VALIDATION Throw error if custom input field empty
 function wooprolab_product_add_on_validation( $passed, $product_id, $qty ){
+
    if( isset( $_POST['custom_field_title'] ) && sanitize_text_field( $_POST['custom_field_title'] ) == '' ) {
       wc_add_notice( 'Custom Label is a required field', 'error' );
       $passed = false;
    }
    return $passed;
 }
-add_filter( 'woocommerce_add_to_cart_validation', 'wooprolab_product_add_on_validation', 10, 3 );
+// add_filter( 'woocommerce_add_to_cart_validation', 'wooprolab_product_add_on_validation', 10, 3 );
 
 
 
 // -----------------------------------------
 // 5. SAVING CUSTOM FIELD VALUE.
 // Save custom input field value into cart item + update total price x item
-function wooprolab_product_add_on_cart_item_data( $cart_item_data, $product_id )
-{
+
+function wooprolab_product_add_on_cart_item_data( $cart_item_data, $product_id ){
     if( !empty( $_POST['custom_field_title'] ) )
     {
         $cart_item_data['custom_field_title'] = $_POST['custom_field_title'];
@@ -98,7 +101,7 @@ function wooprolab_product_add_on_display_cart( $data, $cart_item )
     if ( isset( $cart_item['custom_field_title'] ) )
     {
         $data[]= [
-          'key' => 'Custom Label',
+          'key' => 'Text To Print',
           'value' => sanitize_text_field($cart_item['custom_field_title'])
         ];
 

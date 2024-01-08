@@ -18,7 +18,7 @@ if ( ! defined( 'WPINC' ) ) {
   die;
 }
 
-define( 'WPPLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'WOOPROLAB_URL', plugin_dir_url( __FILE__ ) );
 
 include( plugin_dir_path( __FILE__ ) . 'includes/wooprolab-style.php');
 
